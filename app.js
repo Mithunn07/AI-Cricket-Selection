@@ -1036,7 +1036,7 @@ function saveSquadState() {
   localStorage.setItem('crickselect_squad', JSON.stringify(squad));
 }
 
-// Auto-run on load to restore saved state
+// Auto-run on load to restore saved state and initialize custom cursor
 window.addEventListener('DOMContentLoaded', () => {
   const saved = localStorage.getItem('crickselect_squad');
   if (saved) {
@@ -1052,5 +1052,96 @@ window.addEventListener('DOMContentLoaded', () => {
       squad = [];
     }
   }
+
+  // Initialize the premium custom cursor follower
+  initCustomCursor();
 });
+
+/* ─────────────────── Custom Cursor Follower ─────────────────── */
+function initCustomCursor() {
+  // Only enable on desktop screens (larger than 768px)
+  if (window.innerWidth <= 768) return;
+
+  const dot = document.createElement('div');
+  dot.className = 'custom-cursor-dot';
+  const outline = document.createElement('div');
+  outline.className = 'custom-cursor-outline';
+  
+  document.body.appendChild(dot);
+  document.body.appendChild(outline);
+  
+  document.documentElement.classList.add('custom-cursor-active');
+
+  let mouseX = 0;
+  let mouseY = 0;
+  let outlineX = 0;
+  let outlineY = 0;
+  let isMoving = false;
+
+  // Track position
+  window.addEventListener('mousemove', (e) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+    
+    // Set dot position immediately
+    dot.style.left = `${mouseX}px`;
+    dot.style.top = `${mouseY}px`;
+    
+    // Make cursor visible on first move
+    if (!isMoving) {
+      dot.style.opacity = '1';
+      outline.style.opacity = '1';
+      isMoving = true;
+    }
+  });
+
+  // Smooth lagging animation using lerp (Linear Interpolation)
+  function animateOutline() {
+    outlineX += (mouseX - outlineX) * 0.15;
+    outlineY += (mouseY - outlineY) * 0.15;
+    
+    outline.style.left = `${outlineX}px`;
+    outline.style.top = `${outlineY}px`;
+    
+    requestAnimationFrame(animateOutline);
+  }
+  requestAnimationFrame(animateOutline);
+
+  // Hide cursor when leaving window
+  document.addEventListener('mouseleave', () => {
+    dot.style.opacity = '0';
+    outline.style.opacity = '0';
+    isMoving = false;
+  });
+
+  // Add reactive hover states using event delegation
+  document.addEventListener('mouseover', (e) => {
+    const target = e.target;
+    if (!target) return;
+
+    // Check if target or parent is interactive
+    const isInteractive = target.closest('button, input, select, .squad-item, .tab, .theme-toggle, .close-drawer, [onclick]');
+    const isDanger = target.closest('.btn-danger, .close-drawer');
+    const isGold = target.closest('.is-captain, .captain');
+
+    if (isInteractive) {
+      dot.classList.add('hovered');
+      outline.classList.add('hovered');
+      
+      if (isDanger) {
+        dot.classList.add('danger-hovered');
+        outline.classList.add('danger-hovered');
+      } else if (isGold) {
+        dot.classList.add('gold-hovered');
+        outline.classList.add('gold-hovered');
+      }
+    }
+  });
+
+  document.addEventListener('mouseout', (e) => {
+    dot.className = 'custom-cursor-dot';
+    outline.className = 'custom-cursor-outline';
+  });
+}
+
 

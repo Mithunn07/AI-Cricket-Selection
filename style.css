@@ -750,3 +750,76 @@ footer {
   from { transform: translateX(-20px); opacity: 0; }
   to { transform: translateX(0); opacity: 1; }
 }
+
+/* ── Custom Cursor Styles ── */
+@media (min-width: 769px) {
+  html.custom-cursor-active,
+  html.custom-cursor-active * {
+    cursor: none !important;
+  }
+
+  .custom-cursor-dot {
+    width: 8px;
+    height: 8px;
+    background-color: var(--accent);
+    position: fixed;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 10000;
+    transform: translate(-50%, -50%);
+    transition: width 0.2s, height 0.2s, background-color 0.2s, opacity 0.2s;
+    opacity: 0;
+  }
+
+  .custom-cursor-outline {
+    width: 40px;
+    height: 40px;
+    border: 2px solid var(--accent);
+    position: fixed;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: width 0.3s, height 0.3s, border-color 0.3s, background-color 0.3s, opacity 0.3s;
+    opacity: 0;
+  }
+
+  /* Hover states for interactive elements */
+  .custom-cursor-dot.hovered {
+    width: 4px;
+    height: 4px;
+    background-color: var(--text);
+  }
+
+  .custom-cursor-outline.hovered {
+    width: 52px;
+    height: 52px;
+    background-color: var(--accent-glow);
+    border-color: transparent;
+  }
+
+  /* Danger hover (e.g. delete buttons) */
+  .custom-cursor-dot.danger-hovered {
+    background-color: var(--danger);
+  }
+  
+  .custom-cursor-outline.danger-hovered {
+    width: 52px;
+    height: 52px;
+    background-color: var(--danger-glow);
+    border-color: transparent;
+  }
+
+  /* Gold hover (e.g. Captain cards) */
+  .custom-cursor-dot.gold-hovered {
+    background-color: var(--gold);
+  }
+  
+  .custom-cursor-outline.gold-hovered {
+    width: 52px;
+    height: 52px;
+    background-color: var(--gold-glow);
+    border-color: transparent;
+  }
+}
+
