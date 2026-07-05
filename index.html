@@ -251,6 +251,84 @@
     </div>
   </div>
 
+  <!-- Player Profile Modal -->
+  <div id="profile-modal" class="modal-overlay" onclick="closeProfileModal(event)">
+    <div class="profile-modal-content card" onclick="event.stopPropagation()">
+      <span class="close-modal" onclick="closeProfileModalDirect()">&times;</span>
+      
+      <div class="profile-modal-header">
+        <div class="profile-image-container">
+          <img id="profile-img" src="" alt="Player headshot" />
+          <div id="profile-img-fallback" class="fallback-avatar" style="display:none;"></div>
+        </div>
+        <div class="profile-text-container">
+          <span id="profile-modal-role" class="role-badge">Batsman</span>
+          <h2 id="profile-modal-name">Player Name</h2>
+          <div id="profile-modal-meta" class="profile-meta-subtitle">Matches: 0 · Source: Database</div>
+        </div>
+      </div>
+
+      <div class="profile-modal-body">
+        <div class="stats-overview-grid">
+          <div class="profile-stat-box">
+            <span class="lbl" data-tip="Batting Average">Bat Avg</span>
+            <span class="val" id="profile-stat-bat-avg">0.0</span>
+          </div>
+          <div class="profile-stat-box">
+            <span class="lbl" data-tip="Batting Strike Rate">SR</span>
+            <span class="val" id="profile-stat-sr">0.0</span>
+          </div>
+          <div class="profile-stat-box">
+            <span class="lbl">Runs</span>
+            <span class="val" id="profile-stat-runs">0</span>
+          </div>
+          <div class="profile-stat-box">
+            <span class="lbl">Wkts</span>
+            <span class="val" id="profile-stat-wickets">0</span>
+          </div>
+          <div class="profile-stat-box">
+            <span class="lbl" data-tip="Bowling Economy">Econ</span>
+            <span class="val" id="profile-stat-econ">0.00</span>
+          </div>
+          <div class="profile-stat-box">
+            <span class="lbl">Catches</span>
+            <span class="val" id="profile-stat-catches">0</span>
+          </div>
+        </div>
+
+        <div class="profile-metrics-list">
+          <div class="metric-progress-item">
+            <div class="metric-hdr">
+              <span class="metric-title">Fitness Rating</span>
+              <span class="metric-score" id="profile-metric-fitness">85%</span>
+            </div>
+            <div class="score-bar">
+              <div class="score-bar-fill" id="profile-bar-fitness" style="width: 85%"></div>
+            </div>
+          </div>
+          <div class="metric-progress-item">
+            <div class="metric-hdr">
+              <span class="metric-title">Recent Form</span>
+              <span class="metric-score" id="profile-metric-form">70%</span>
+            </div>
+            <div class="score-bar">
+              <div class="score-bar-fill" id="profile-bar-form" style="width: 70%"></div>
+            </div>
+          </div>
+          <div class="metric-progress-item">
+            <div class="metric-hdr">
+              <span class="metric-title">Leadership Skill</span>
+              <span class="metric-score" id="profile-metric-leadership">50%</span>
+            </div>
+            <div class="score-bar">
+              <div class="score-bar-fill" id="profile-bar-leadership" style="width: 50%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <footer>
     <strong>CrickSelect AI</strong> · AI Cricket Team Selection Platform ·
     Stats sourced from ESPNcricinfo &amp; public web data ·

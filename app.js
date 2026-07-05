@@ -740,7 +740,7 @@ function renderXI(data) {
     const isC  = p.name === data.captain;
     const isVC = p.name === data.vice_captain;
     return `
-      <div class="xi-player-card ${isC?'is-captain':''} ${isVC?'is-vc':''}">
+      <div class="xi-player-card ${isC?'is-captain':''} ${isVC?'is-vc':''}" onclick="openPlayerProfile('${p.name}')" style="cursor: pointer;">
         ${isC  ? '<div class="xi-badge c">CAPTAIN</div>' : ''}
         ${isVC ? '<div class="xi-badge vc">VICE-C</div>' : ''}
         <div class="xi-name">${p.name}</div>
@@ -1029,7 +1029,101 @@ Object.assign(window, {
   savePlayerStats,
   switchTab,
   removePlayer,
+  openPlayerProfile,
+  closeProfileModal,
+  closeProfileModalDirect,
 });
+
+/* ─────────────────── Player Images & Profile Modal Logic ─────────────────── */
+const PLAYER_IMAGES = {
+  "virat kohli": "https://img1.hscicdn.com/image/upload/f_auto,t_ds_square_w_320,q_50/lsci/db/PICTURES/CMS/316600/316629.png",
+  "rohit sharma": "https://img1.hscicdn.com/image/upload/f_auto,t_ds_square_w_320,q_50/lsci/db/PICTURES/CMS/384100/384131.png",
+  "ms dhoni": "https://img1.hscicdn.com/image/upload/f_auto,t_ds_square_w_320,q_50/lsci/db/PICTURES/CMS/384100/384144.png",
+  "steve smith": "https://img1.hscicdn.com/image/upload/f_auto,t_ds_square_w_320,q_50/lsci/db/PICTURES/CMS/384200/384284.png",
+  "kane williamson": "https://img1.hscicdn.com/image/upload/f_auto,t_ds_square_w_320,q_50/lsci/db/PICTURES/CMS/384300/384351.png",
+  "babar azam": "https://img1.hscicdn.com/image/upload/f_auto,t_ds_square_w_320,q_50/lsci/db/PICTURES/CMS/384300/384393.png",
+  "ab de villiers": "https://img1.hscicdn.com/image/upload/f_auto,t_ds_square_w_320,q_50/lsci/db/PICTURES/CMS/384300/384308.png",
+  "sachin tendulkar": "https://img1.hscicdn.com/image/upload/f_auto,t_ds_square_w_320,q_50/lsci/db/PICTURES/CMS/384100/384120.png",
+  "jasprit bumrah": "https://img1.hscicdn.com/image/upload/f_auto,t_ds_square_w_320,q_50/lsci/db/PICTURES/CMS/384100/384134.png",
+  "pat cummins": "https://img1.hscicdn.com/image/upload/f_auto,t_ds_square_w_320,q_50/lsci/db/PICTURES/CMS/384200/384287.png",
+  "mitchell starc": "https://img1.hscicdn.com/image/upload/f_auto,t_ds_square_w_320,q_50/lsci/db/PICTURES/CMS/384200/384293.png",
+  "ben stokes": "https://img1.hscicdn.com/image/upload/f_auto,t_ds_square_w_320,q_50/lsci/db/PICTURES/CMS/384300/384323.png",
+  "jos buttler": "https://img1.hscicdn.com/image/upload/f_auto,t_ds_square_w_320,q_50/lsci/db/PICTURES/CMS/384300/384324.png",
+  "glenn maxwell": "https://img1.hscicdn.com/image/upload/f_auto,t_ds_square_w_320,q_50/lsci/db/PICTURES/CMS/384200/384288.png",
+  "shakib al hasan": "https://img1.hscicdn.com/image/upload/f_auto,t_ds_square_w_320,q_50/lsci/db/PICTURES/CMS/384300/384365.png",
+  "rashid khan": "https://img1.hscicdn.com/image/upload/f_auto,t_ds_square_w_320,q_50/lsci/db/PICTURES/CMS/384300/384379.png",
+  "ravindra jadeja": "https://img1.hscicdn.com/image/upload/f_auto,t_ds_square_w_320,q_50/lsci/db/PICTURES/CMS/384100/384140.png"
+};
+
+function getRoleSvg(role) {
+  const r = (role || "").toLowerCase();
+  if (r.includes('wick')) {
+    // Wicketkeeper stumps/gloves icon
+    return `<svg viewBox="0 0 64 64" width="48" height="48" fill="currentColor"><rect x="18" y="8" width="4" height="48" rx="2"/><rect x="30" y="8" width="4" height="48" rx="2"/><rect x="42" y="8" width="4" height="48" rx="2"/><rect x="14" y="8" width="36" height="4" rx="2"/></svg>`;
+  }
+  if (r.includes('bowl')) {
+    // Cricket ball icon
+    return `<svg viewBox="0 0 64 64" width="48" height="48" fill="none" stroke="currentColor" stroke-width="3"><circle cx="32" cy="32" r="24"/><path d="M16 32 C 24 16, 40 16, 48 32 C 40 48, 24 48, 16 32"/></svg>`;
+  }
+  if (r.includes('all')) {
+    // Crossed bat and ball
+    return `<svg viewBox="0 0 64 64" width="48" height="48" fill="currentColor"><path d="M12 48 L48 12 A 4 4 0 0 1 54 18 L18 54 A 4 4 0 0 1 12 48 Z" /><circle cx="48" cy="48" r="8" /></svg>`;
+  }
+  // Batsman bat icon
+  return `<svg viewBox="0 0 64 64" width="48" height="48" fill="none" stroke="currentColor" stroke-width="3"><path d="M44 8 L56 20 L24 52 L12 40 Z M12 40 L6 46 A 2 2 0 0 0 8 50 L14 44 Z"/></svg>`;
+}
+
+function openPlayerProfile(playerName) {
+  const p = squad.find(player => player.name.toLowerCase() === playerName.toLowerCase());
+  if (!p) return;
+
+  document.getElementById('profile-modal-name').textContent = p.name;
+  document.getElementById('profile-modal-role').textContent = p.role;
+  document.getElementById('profile-modal-role').className = `role-badge ${roleBadgeClass(p.role)}`;
+  document.getElementById('profile-modal-meta').textContent = `Matches: ${p.matches || p.batting_matches || 0} · Source: ${p.source === 'local' ? 'Database' : p.source === 'web' ? 'Live Cricinfo' : 'Manual'}`;
+
+  document.getElementById('profile-stat-bat-avg').textContent = fmt(p.batting_avg);
+  document.getElementById('profile-stat-sr').textContent = fmt(p.strike_rate);
+  document.getElementById('profile-stat-runs').textContent = p.total_runs || 0;
+  document.getElementById('profile-stat-wickets').textContent = p.wickets || 0;
+  document.getElementById('profile-stat-econ').textContent = fmt(p.economy);
+  document.getElementById('profile-stat-catches').textContent = p.catches || 0;
+
+  // Progress bars
+  document.getElementById('profile-metric-fitness').textContent = `${p.fitness || 85}%`;
+  document.getElementById('profile-bar-fitness').style.width = `${p.fitness || 85}%`;
+  document.getElementById('profile-metric-form').textContent = `${p.recent_form || 70}%`;
+  document.getElementById('profile-bar-form').style.width = `${p.recent_form || 70}%`;
+  document.getElementById('profile-metric-leadership').textContent = `${p.leadership_rating || 50}%`;
+  document.getElementById('profile-bar-leadership').style.width = `${p.leadership_rating || 50}%`;
+
+  // Image handling
+  const imgEl = document.getElementById('profile-img');
+  const fallbackEl = document.getElementById('profile-img-fallback');
+  const key = p.name.toLowerCase().trim();
+
+  if (PLAYER_IMAGES[key]) {
+    imgEl.src = PLAYER_IMAGES[key];
+    imgEl.style.display = 'block';
+    fallbackEl.style.display = 'none';
+  } else {
+    imgEl.style.display = 'none';
+    fallbackEl.innerHTML = getRoleSvg(p.role);
+    fallbackEl.style.display = 'flex';
+  }
+
+  document.getElementById('profile-modal').classList.add('open');
+}
+
+function closeProfileModal(event) {
+  if (event.target === document.getElementById('profile-modal')) {
+    closeProfileModalDirect();
+  }
+}
+
+function closeProfileModalDirect() {
+  document.getElementById('profile-modal').classList.remove('open');
+}
 
 /* ─────────────────── LocalStorage Persistence Helpers ─────────────────── */
 function saveSquadState() {

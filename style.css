@@ -823,3 +823,190 @@ footer {
   }
 }
 
+/* ── Player Profile Modal Styles ── */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 14, 20, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.modal-overlay.open {
+  display: flex;
+  opacity: 1;
+}
+
+.profile-modal-content {
+  width: 90%;
+  max-width: 480px;
+  background: var(--bg-card);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 32px;
+  position: relative;
+  box-shadow: var(--shadow-hover);
+  transform: translateY(30px);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modal-overlay.open .profile-modal-content {
+  transform: translateY(0);
+}
+
+.close-modal {
+  position: absolute;
+  top: 20px;
+  right: 24px;
+  font-size: 28px;
+  font-weight: 500;
+  color: var(--text2);
+  cursor: pointer;
+  line-height: 1;
+  transition: color 0.2s ease;
+}
+
+.close-modal:hover {
+  color: var(--danger);
+}
+
+.profile-modal-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 24px;
+  margin-bottom: 24px;
+}
+
+.profile-image-container {
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid var(--accent);
+  background: rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 20px var(--accent-glow);
+  flex-shrink: 0;
+  position: relative;
+}
+
+[data-theme="light"] .profile-image-container {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.profile-image-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-text-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.profile-text-container h2 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 28px;
+  letter-spacing: 0.04em;
+  line-height: 1.1;
+  color: var(--text);
+}
+
+.profile-meta-subtitle {
+  font-size: 12px;
+  color: var(--text2);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.stats-overview-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+.profile-stat-box {
+  background: rgba(0, 0, 0, 0.15);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.3s ease;
+}
+
+[data-theme="light"] .profile-stat-box {
+  background: rgba(255, 255, 255, 0.35);
+}
+
+.profile-stat-box:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+}
+
+.profile-stat-box .lbl {
+  font-size: 10px;
+  text-transform: uppercase;
+  color: var(--text2);
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.05em;
+}
+
+.profile-stat-box .val {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.profile-metrics-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.metric-progress-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.metric-hdr {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.metric-title {
+  color: var(--text2);
+}
+
+.metric-score {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.fallback-avatar svg {
+  width: 44px;
+  height: 44px;
+  fill: var(--text2);
+}
+
+
