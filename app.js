@@ -412,6 +412,7 @@ async function addPlayer() {
     input.value = '';
     renderSquad();
     updateCompareSelects();
+    saveSquadState();
     
     // Custom success alerts based on data source
     if (data.source === 'web') {
@@ -548,6 +549,7 @@ function removePlayer(idx) {
   squad.splice(idx, 1);
   renderSquad();
   updateCompareSelects();
+  saveSquadState();
   
   // Reset XI if player removed
   document.getElementById('xi-results').style.display = 'none';
@@ -593,6 +595,7 @@ function clearSquad() {
   lastXI = null;
   renderSquad();
   updateCompareSelects();
+  saveSquadState();
   document.getElementById('xi-results').style.display = 'none';
   document.getElementById('xi-empty').style.display = 'block';
 }
@@ -613,6 +616,7 @@ async function loadDemo() {
   }
   setLoading(false);
   updateCompareSelects();
+  saveSquadState();
   showAlert(`Loaded ${squad.length} players!`, 'success');
 }
 
@@ -671,6 +675,7 @@ function savePlayerStats(event) {
   closeDrawer();
   renderSquad();
   updateCompareSelects();
+  saveSquadState();
   
   // Auto regenerate Playing XI if it is currently displayed
   if (lastXI) {
@@ -1025,3 +1030,27 @@ Object.assign(window, {
   switchTab,
   removePlayer,
 });
+
+/* ─────────────────── LocalStorage Persistence Helpers ─────────────────── */
+function saveSquadState() {
+  localStorage.setItem('crickselect_squad', JSON.stringify(squad));
+}
+
+// Auto-run on load to restore saved state
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem('crickselect_squad');
+  if (saved) {
+    try {
+      squad = JSON.parse(saved);
+      renderSquad();
+      updateCompareSelects();
+      if (squad.length >= 11) {
+        selectXI();
+      }
+    } catch(e) {
+      console.warn("Error restoring squad from localStorage:", e);
+      squad = [];
+    }
+  }
+});
+
