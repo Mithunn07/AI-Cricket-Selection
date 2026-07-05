@@ -5,9 +5,9 @@ let squad = [];          // [{name, role, batting_avg, ...}]
 let lastXI = null;
 
 const DEMO_PLAYERS = [
-  "Virat Kohli","Rohit Sharma","MS Dhoni","Jasprit Bumrah","Ravindra Jadeja",
-  "KL Rahul","Hardik Pandya","Mohammed Shami","Kuldeep Yadav","Shubman Gill",
-  "Shreyas Iyer","Yuzvendra Chahal","Suryakumar Yadav","Axar Patel","Rishabh Pant"
+  "Virat Kohli", "Steve Smith", "Kane Williamson", "AB de Villiers", "Jasprit Bumrah",
+  "Jos Buttler", "Glenn Maxwell", "Shakib Al Hasan", "Rashid Khan", "Pat Cummins",
+  "Mitchell Starc", "Babar Azam", "Rohit Sharma", "MS Dhoni", "Ravindra Jadeja"
 ];
 
 /* ─────────────────── Theme ─────────────────── */
@@ -419,7 +419,7 @@ async function addPlayer() {
     } else if (data.source === 'local') {
       showAlert(`${data.name} loaded from curated database!`, 'success');
     } else {
-      showAlert(`${data.name} loaded as a blank profile (fetch failed). Click to edit stats.`, 'info');
+      showAlert(`Could not connect to cricinfo to fetch live stats for "${data.name}". Created a customizable profile for you! Click the player card below to edit stats manually.`, 'info');
     }
     
     // Auto refresh Playing XI if already calculated
