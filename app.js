@@ -565,7 +565,7 @@ function renderSquad() {
   document.getElementById('select-btn').disabled = squad.length < 11;
 
   list.innerHTML = squad.map((p, i) => `
-    <div class="squad-item" onclick="openEditDrawer(event, ${i})">
+    <div class="squad-item" onclick="openPlayerProfile('${p.name}')">
       <span class="num">${String(i+1).padStart(2,'0')}</span>
       <span class="name">${p.name}</span>
       <span class="role-badge ${roleBadgeClass(p.role)}">${p.role || '?'}</span>
@@ -620,78 +620,7 @@ async function loadDemo() {
   showAlert(`Loaded ${squad.length} players!`, 'success');
 }
 
-/* ─────────────────── Slide-out Drawer Stats Editor ─────────────────── */
-function openEditDrawer(event, idx) {
-  if (event.target.tagName === 'BUTTON' || event.target.closest('button')) return;
-  
-  const p = squad[idx];
-  document.getElementById('edit-player-index').value = idx;
-  document.getElementById('edit-name').value = p.name;
-  document.getElementById('edit-role').value = p.role || "Batsman";
-  document.getElementById('edit-matches').value = p.matches || p.batting_matches || 0;
-  document.getElementById('edit-bat-avg').value = p.batting_avg || 0;
-  document.getElementById('edit-sr').value = p.strike_rate || 0;
-  document.getElementById('edit-runs').value = p.total_runs || 0;
-  document.getElementById('edit-wickets').value = p.wickets || 0;
-  document.getElementById('edit-econ').value = p.economy || 0;
-  document.getElementById('edit-catches').value = p.catches || 0;
-  document.getElementById('edit-fitness').value = p.fitness || 85;
-  document.getElementById('edit-form').value = p.recent_form || 70;
-  document.getElementById('edit-leadership').value = p.leadership_rating || 50;
 
-  document.getElementById('edit-drawer').classList.add('open');
-}
-
-function closeDrawer() {
-  document.getElementById('edit-drawer').classList.remove('open');
-}
-
-function savePlayerStats(event) {
-  event.preventDefault();
-  const idx = parseInt(document.getElementById('edit-player-index').value);
-  const updatedRole = document.getElementById('edit-role').value;
-  
-  squad[idx] = {
-    name: document.getElementById('edit-name').value,
-    role: updatedRole,
-    matches: parseInt(document.getElementById('edit-matches').value) || 0,
-    batting_matches: parseInt(document.getElementById('edit-matches').value) || 0,
-    batting_avg: parseFloat(document.getElementById('edit-bat-avg').value) || 0,
-    strike_rate: parseFloat(document.getElementById('edit-sr').value) || 0,
-    total_runs: parseInt(document.getElementById('edit-runs').value) || 0,
-    wickets: parseInt(document.getElementById('edit-wickets').value) || 0,
-    economy: parseFloat(document.getElementById('edit-econ').value) || 0,
-    catches: parseInt(document.getElementById('edit-catches').value) || 0,
-    fitness: parseInt(document.getElementById('edit-fitness').value) || 85,
-    recent_form: parseInt(document.getElementById('edit-form').value) || 70,
-    leadership_rating: parseInt(document.getElementById('edit-leadership').value) || 50,
-    player_id: squad[idx].player_id || ""
-  };
-  
-  // Update overall scores
-  const scored = computeScores(squad);
-  squad[idx].overall_score = scored[idx].overall_score;
-
-  closeDrawer();
-  renderSquad();
-  updateCompareSelects();
-  saveSquadState();
-  
-  // Auto regenerate Playing XI if it is currently displayed
-  if (lastXI) {
-    selectXI();
-  }
-  
-  showAlert(`${squad[idx].name} updated!`, 'success');
-}
-
-/* Close drawer on clicking outside the drawer content */
-window.addEventListener('click', e => {
-  const drawer = document.getElementById('edit-drawer');
-  if (drawer.classList.contains('open') && !drawer.contains(e.target) && !e.target.closest('.squad-item')) {
-    closeDrawer();
-  }
-});
 
 /* ─────────────────── Select XI (Invoked from UI Button) ─────────────────── */
 function selectXIButton() {
@@ -1024,9 +953,6 @@ Object.assign(window, {
   clearSquad,
   loadDemo,
   selectXIButton,
-  openEditDrawer,
-  closeDrawer,
-  savePlayerStats,
   switchTab,
   removePlayer,
   openPlayerProfile,

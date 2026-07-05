@@ -71,7 +71,7 @@
         </div>
 
         <div class="squad-count">Squad: <b id="squad-count">0</b> / 25 players</div>
-        <div style="font-size: 11px; color: var(--text3); margin-top: -4px; margin-bottom: 8px;">💡 Tip: Click on a player to edit their statistics</div>
+        <div style="font-size: 11px; color: var(--text3); margin-top: -4px; margin-bottom: 8px;">💡 Tip: Click on a player to view their stats and picture</div>
         <div id="squad-list"></div>
 
         <div style="margin-top:20px;padding-top:20px;border-top:1px solid var(--border)">
@@ -162,94 +162,7 @@
     </div>
   </div>
 
-  <!-- Slide-out Drawer for editing player stats -->
-  <div id="edit-drawer" class="drawer">
-    <div class="drawer-content">
-      <div class="drawer-header">
-        <h3 style="font-family: 'Bebas Neue', sans-serif; font-size: 24px; letter-spacing: 0.04em;">Edit Player Stats</h3>
-        <span class="close-drawer" onclick="closeDrawer()">&times;</span>
-      </div>
-      <div class="drawer-body">
-        <form id="edit-player-form" onsubmit="savePlayerStats(event)">
-          <input type="hidden" id="edit-player-index" />
-          
-          <div class="form-group">
-            <label for="edit-name">Player Name</label>
-            <input type="text" id="edit-name" required />
-          </div>
-          
-          <div class="form-row">
-            <div class="form-group">
-              <label for="edit-role">Role</label>
-              <select id="edit-role" class="stat-select" required>
-                <option value="Batsman">Batsman</option>
-                <option value="Bowler">Bowler</option>
-                <option value="All-Rounder">All-Rounder</option>
-                <option value="Wicketkeeper">Wicketkeeper</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label for="edit-matches">Matches</label>
-              <input type="number" id="edit-matches" min="0" required />
-            </div>
-          </div>
-          
-          <div class="form-row">
-            <div class="form-group">
-              <label for="edit-bat-avg">Batting Avg</label>
-              <input type="number" id="edit-bat-avg" step="0.1" min="0" required />
-            </div>
-            <div class="form-group">
-              <label for="edit-sr">Strike Rate</label>
-              <input type="number" id="edit-sr" step="0.1" min="0" required />
-            </div>
-          </div>
-          
-          <div class="form-row">
-            <div class="form-group">
-              <label for="edit-runs">Total Runs</label>
-              <input type="number" id="edit-runs" min="0" required />
-            </div>
-            <div class="form-group">
-              <label for="edit-wickets">Wickets</label>
-              <input type="number" id="edit-wickets" min="0" required />
-            </div>
-          </div>
-          
-          <div class="form-row">
-            <div class="form-group">
-              <label for="edit-econ">Economy</label>
-              <input type="number" id="edit-econ" step="0.01" min="0" required />
-            </div>
-            <div class="form-group">
-              <label for="edit-catches">Catches</label>
-              <input type="number" id="edit-catches" min="0" required />
-            </div>
-          </div>
-          
-          <div class="form-row">
-            <div class="form-group">
-              <label for="edit-fitness">Fitness Level %</label>
-              <input type="number" id="edit-fitness" min="0" max="100" required />
-            </div>
-            <div class="form-group">
-              <label for="edit-form">Recent Form %</label>
-              <input type="number" id="edit-form" min="0" max="100" required />
-            </div>
-          </div>
-          
-          <div class="form-group">
-            <label for="edit-leadership">Leadership Rating (0-100)</label>
-            <input type="number" id="edit-leadership" min="0" max="100" required />
-          </div>
-          
-          <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; margin-top: 10px; color: #000;">
-            💾 Save Changes
-          </button>
-        </form>
-      </div>
-    </div>
-  </div>
+
 
   <!-- Player Profile Modal -->
   <div id="profile-modal" class="modal-overlay" onclick="closeProfileModal(event)">
