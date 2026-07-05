@@ -1124,27 +1124,19 @@ function closeProfileModalDirect() {
   document.getElementById('profile-modal').classList.remove('open');
 }
 
-/* ─────────────────── LocalStorage Persistence Helpers ─────────────────── */
+/* ─────────────────── Fresh Start on Every Load ─────────────────── */
+// Squad always starts empty — no persistence between sessions
 function saveSquadState() {
-  localStorage.setItem('crickselect_squad', JSON.stringify(squad));
+  // Intentionally no-op: squad is NOT saved between sessions
+  // Every page load starts a fresh team selection process
 }
 
-// Auto-run on load to restore saved state and initialize custom cursor
+// Auto-run on load — always clear any saved state and start fresh
 window.addEventListener('DOMContentLoaded', () => {
-  const saved = localStorage.getItem('crickselect_squad');
-  if (saved) {
-    try {
-      squad = JSON.parse(saved);
-      renderSquad();
-      updateCompareSelects();
-      if (squad.length >= 11) {
-        selectXI();
-      }
-    } catch(e) {
-      console.warn("Error restoring squad from localStorage:", e);
-      squad = [];
-    }
-  }
+  // Clear any previously saved squad so every visit starts fresh
+  localStorage.removeItem('crickselect_squad');
+  squad = [];
+  renderSquad();
 
   // Initialize the premium custom cursor follower
   initCustomCursor();
