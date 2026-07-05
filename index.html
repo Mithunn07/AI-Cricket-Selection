@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>XI Select · AI Cricket Team Builder</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+  
+  <!-- Chart.js CDN for player comparison radar charts -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Loading overlay -->
+  <div id="loading-overlay">
+    <div class="loader-ring"></div>
+    <div class="loader-text" id="loading-text">Fetching player data…</div>
+  </div>
+
+  <!-- Header -->
+  <header>
+    <div class="logo">
+      <span>Crick</span>Select<span> AI</span> 
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" style="margin-left:5px;">
+        <circle cx="10" cy="10" r="9" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M10 1 Q13 5 10 10 Q7 5 10 1Z" fill="currentColor" opacity=".3"/>
+        <path d="M10 10 Q14 13 10 19 Q6 13 10 10Z" fill="currentColor" opacity=".3"/>
+      </svg>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle" onclick="toggleTheme()">
+        <span class="icon" id="theme-icon">☀️</span>
+        <span id="theme-label">Light</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-label">AI-Powered · Data-Driven · Unbiased</div>
+    <h1>Build Your Best<br/><em>Playing XI</em></h1>
+    <p>Add up to 25 players — the system pulls live stats from cricinfo, scores every player, selects the optimal squad, and recommends your captain.</p>
+  </section>
+
+  <!-- Main Content -->
+  <div class="main-grid">
+
+    <!-- LEFT: Squad Builder -->
+    <div>
+      <div class="card">
+        <div class="card-title">Squad Builder</div>
+
+        <div id="alert-box" class="alert"></div>
+
+        <div class="search-wrap" style="position:relative;">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="player-input" placeholder="Enter player name (e.g. Virat Kohli)" autocomplete="off"/>
+          <div class="spinner" id="search-spinner"></div>
+          <div id="suggestions-box"></div>
+        </div>
+
+        <div style="display:flex;gap:8px;margin-bottom:16px;">
+          <button class="btn btn-primary" style="flex:1; justify-content: center;" onclick="addPlayer()">Add Player</button>
+          <button class="btn btn-secondary" onclick="clearSquad()" title="Clear all">🗑</button>
+        </div>
+
+        <div class="squad-count">Squad: <b id="squad-count">0</b> / 25 players</div>
+        <div style="font-size: 11px; color: var(--text3); margin-top: -4px; margin-bottom: 8px;">💡 Tip: Click on a player to edit their statistics</div>
+        <div id="squad-list"></div>
+
+        <div style="margin-top:20px;padding-top:20px;border-top:1px solid var(--border)">
+          <button class="btn btn-primary" style="width:100%;justify-content:center;font-size:14px; color: #000;"
+                  onclick="selectXIButton()" id="select-btn" disabled>
+            ⚡ Select Best Playing XI
+          </button>
+          <div style="text-align:center;margin-top:8px;font-size:11px;color:var(--text3)">
+            Minimum 11 players required
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick add demo -->
+      <div class="card" style="margin-top:16px">
+        <div class="card-title">Quick Demo</div>
+        <p style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.6">
+          Try loading a sample squad of well-known international cricketers to see the AI in action.
+        </p>
+        <button class="btn btn-secondary" style="width:100%;justify-content:center" onclick="loadDemo()">
+          🏏 Load Sample Squad
+        </button>
+      </div>
+    </div>
+
+    <!-- RIGHT: Analysis Panels -->
+    <div>
+      <div class="tabs">
+        <div class="tab active" onclick="switchTab('xi')">Playing XI</div>
+        <div class="tab" onclick="switchTab('rankings')">Rankings</div>
+        <div class="tab" onclick="switchTab('compare')">Compare</div>
+      </div>
+
+      <!-- XI Tab -->
+      <div id="tab-xi">
+        <div id="xi-empty" class="card empty">
+          <div class="big-icon">🏟️</div>
+          <p>Add at least 11 players and click <b>Select Best Playing XI</b> to see the AI's team selection with captain picks and player analysis.</p>
+        </div>
+
+        <div id="xi-results" style="display:none">
+          <div class="leadership-cards" id="leadership-cards"></div>
+
+          <div class="card" style="margin-bottom:16px">
+            <div class="card-title">Playing XI</div>
+            <div class="xi-grid" id="xi-grid"></div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Selection Analysis</div>
+            <div id="xi-table-wrap"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rankings Tab -->
+      <div id="tab-rankings" style="display:none">
+        <div class="card">
+          <div class="card-title">Player Rankings</div>
+          <div id="rankings-empty" class="empty">
+            <div class="big-icon">📊</div>
+            <p>Build your squad to see player rankings and detailed statistics.</p>
+          </div>
+          <div id="rankings-table" style="overflow-x:auto"></div>
+        </div>
+      </div>
+
+      <!-- Compare Tab -->
+      <div id="tab-compare" style="display:none">
+        <div class="card">
+          <div class="card-title">Compare Players</div>
+          <div style="display:flex;gap:10px;margin-bottom:16px" id="compare-selects">
+            <select id="compare-a" class="stat-select" style="flex:1">
+              <option value="">— Select Player A —</option>
+            </select>
+            <select id="compare-b" class="stat-select" style="flex:1">
+              <option value="">— Select Player B —</option>
+            </select>
+          </div>
+          <div id="compare-result"></div>
+          <div id="compare-empty" class="empty">
+            <div class="big-icon">⚖️</div>
+            <p>Select two players from your squad to compare their statistics head-to-head.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Slide-out Drawer for editing player stats -->
+  <div id="edit-drawer" class="drawer">
+    <div class="drawer-content">
+      <div class="drawer-header">
+        <h3 style="font-family: 'Bebas Neue', sans-serif; font-size: 24px; letter-spacing: 0.04em;">Edit Player Stats</h3>
+        <span class="close-drawer" onclick="closeDrawer()">&times;</span>
+      </div>
+      <div class="drawer-body">
+        <form id="edit-player-form" onsubmit="savePlayerStats(event)">
+          <input type="hidden" id="edit-player-index" />
+          
+          <div class="form-group">
+            <label for="edit-name">Player Name</label>
+            <input type="text" id="edit-name" required />
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="edit-role">Role</label>
+              <select id="edit-role" class="stat-select" required>
+                <option value="Batsman">Batsman</option>
+                <option value="Bowler">Bowler</option>
+                <option value="All-Rounder">All-Rounder</option>
+                <option value="Wicketkeeper">Wicketkeeper</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="edit-matches">Matches</label>
+              <input type="number" id="edit-matches" min="0" required />
+            </div>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="edit-bat-avg">Batting Avg</label>
+              <input type="number" id="edit-bat-avg" step="0.1" min="0" required />
+            </div>
+            <div class="form-group">
+              <label for="edit-sr">Strike Rate</label>
+              <input type="number" id="edit-sr" step="0.1" min="0" required />
+            </div>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="edit-runs">Total Runs</label>
+              <input type="number" id="edit-runs" min="0" required />
+            </div>
+            <div class="form-group">
+              <label for="edit-wickets">Wickets</label>
+              <input type="number" id="edit-wickets" min="0" required />
+            </div>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="edit-econ">Economy</label>
+              <input type="number" id="edit-econ" step="0.01" min="0" required />
+            </div>
+            <div class="form-group">
+              <label for="edit-catches">Catches</label>
+              <input type="number" id="edit-catches" min="0" required />
+            </div>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="edit-fitness">Fitness Level %</label>
+              <input type="number" id="edit-fitness" min="0" max="100" required />
+            </div>
+            <div class="form-group">
+              <label for="edit-form">Recent Form %</label>
+              <input type="number" id="edit-form" min="0" max="100" required />
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="edit-leadership">Leadership Rating (0-100)</label>
+            <input type="number" id="edit-leadership" min="0" max="100" required />
+          </div>
+          
+          <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; margin-top: 10px; color: #000;">
+            💾 Save Changes
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <strong>CrickSelect AI</strong> · AI Cricket Team Selection Platform ·
+    Stats sourced from ESPNcricinfo &amp; public web data ·
+    Built with HTML, CSS, JavaScript (Pure Client-side)
+  </footer>
+
+  <!-- Scripts: db.js is imported by app.js via ES module import -->
+  <script type="module" src="app.js"></script>
+</body>
+</html>
